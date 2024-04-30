@@ -4,6 +4,7 @@ BMObject and it's exceptions.
 import logging
 import time
 
+import network
 import protocol
 import state
 from highlevelcrypto import calculateInventoryHash
@@ -111,7 +112,7 @@ class BMObject(object):  # pylint: disable=too-many-instance-attributes
         or advertise it unnecessarily)
         """
         # if it's a stem duplicate, pretend we don't have it
-        if state.Dandelion.hasHash(self.inventoryHash):
+        if network.Dandelion.hasHash(self.inventoryHash):
             return
         if self.inventoryHash in state.Inventory:
             raise BMObjectAlreadyHaveError()

@@ -15,6 +15,7 @@ import addresses
 import connectionpool
 import knownnodes
 import protocol
+import network
 import state
 from bmconfigparser import config
 from queues import invQueue, objectProcessorQueue, portCheckerQueue
@@ -354,10 +355,10 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             return True
 
         for i in map(str, items):
-            if i in state.Inventory and not state.Dandelion.hasHash(i):
+            if i in state.Inventory and not network.Dandelion.hasHash(i):
                 continue
-            if dandelion and not state.Dandelion.hasHash(i):
-                state.Dandelion.addHash(i, self)
+            if dandelion and not network.Dandelion.hasHash(i):
+                network.Dandelion.addHash(i, self)
             self.handleReceivedInventory(i)
 
         return True
@@ -419,9 +420,9 @@ class BMProto(AdvancedDispatcher, ObjectTracker):
             except KeyError:
                 pass
 
-        if self.object.inventoryHash in state.Inventory and state.Dandelion.hasHash(
+        if self.object.inventoryHash in state.Inventory and network.Dandelion.hasHash(
                 self.object.inventoryHash):
-            state.Dandelion.removeHash(
+            network.Dandelion.removeHash(
                 self.object.inventoryHash, "cycle detection")
 
         state.Inventory[self.object.inventoryHash] = (

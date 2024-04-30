@@ -8,6 +8,7 @@ from time import time
 import addresses
 import protocol
 import state
+import network
 from network.connectionpool import BMConnectionPool
 from queues import invQueue
 from threads import StoppableThread
@@ -39,10 +40,10 @@ class InvThread(StoppableThread):
     @staticmethod
     def handleLocallyGenerated(stream, hashId):
         """Locally generated inventory items require special handling"""
-        state.Dandelion.addHash(hashId, stream=stream)
+        network.Dandelion.addHash(hashId, stream=stream)
         for connection in BMConnectionPool().connections():
             if state.dandelion_enabled and connection != \
-                    state.Dandelion.objectChildStem(hashId):
+                    network.Dandelion.objectChildStem(hashId):
                 continue
             connection.objectsNewToThem[hashId] = time()
 
@@ -51,7 +52,7 @@ class InvThread(StoppableThread):
             chunk = []
             while True:
                 # Dandelion fluff trigger by expiration
-                handleExpiredDandelion(state.Dandelion.expire())
+                handleExpiredDandelion(network.Dandelion.expire())
                 try:
                     data = invQueue.get(False)
                     chunk.append((data[0], data[1]))
@@ -74,7 +75,7 @@ class InvThread(StoppableThread):
                         except KeyError:
                             continue
                         try:
-                            if connection == state.Dandelion.objectChildStem(inv[1]):
+                            if connection == network.Dandelion.objectChildStem(inv[1]):
                                 # Fluff trigger by RNG
                                 # auto-ignore if config set to 0, i.e. dandelion is off
                                 if random.randint(1, 100) >= state.dandelion_enabled:  # nosec B311
@@ -104,7 +105,7 @@ class InvThread(StoppableThread):
             for _ in range(len(chunk)):
                 invQueue.task_done()
 
-            if state.Dandelion.refresh < time():
-                state.Dandelion.reRandomiseStems()
+            if network.Dandelion.refresh < time():
+                network.Dandelion.reRandomiseStems()
 
             self.stop.wait(1)

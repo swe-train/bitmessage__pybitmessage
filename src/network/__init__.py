@@ -8,17 +8,18 @@ try:
 except ImportError:
     AnnounceThread = None
     BMConnectionPool = None
+from .dandelion import Dandelion as Dandelion_cls
 from .threads import StoppableThread
 
+# Global Runtime variable
+Dandelion = Dandelion_cls()
 
 __all__ = ["AnnounceThread", "BMConnectionPool", "StoppableThread"]
 
 
 def start(config, state):
     """Start network threads"""
-    import state
     from .addrthread import AddrThread
-    from .dandelion import Dandelion
     from .downloadthread import DownloadThread
     from .invthread import InvThread
     from .networkthread import BMNetworkThread
@@ -28,7 +29,6 @@ def start(config, state):
 
     readKnownNodes()
     # init, needs to be early because other thread may access it early
-    state.Dandelion = Dandelion()
     BMConnectionPool().connectToStream(1)
     for thread in (
         BMNetworkThread(), InvThread(), AddrThread(),

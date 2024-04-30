@@ -14,6 +14,7 @@ import addresses
 import helper_random
 import l10n
 import protocol
+import network
 import state
 from bmconfigparser import config
 from highlevelcrypto import randomBytes
@@ -168,7 +169,7 @@ class TCPConnection(BMProto, TLSDispatcher):
             knownnodes.increaseRating(self.destination)
             knownnodes.addKnownNode(
                 self.streams, self.destination, time.time())
-            state.Dandelion.maybeAddStem(self)
+            network.Dandelion.maybeAddStem(self)
         self.sendAddr()
         self.sendBigInv()
 
@@ -230,7 +231,7 @@ class TCPConnection(BMProto, TLSDispatcher):
             with self.objectsNewToThemLock:
                 for objHash in state.Inventory.unexpired_hashes_by_stream(stream):
                     # don't advertise stem objects on bigInv
-                    if state.Dandelion.hasHash(objHash):
+                    if network.Dandelion.hasHash(objHash):
                         continue
                     bigInvList[objHash] = 0
         objectCount = 0
@@ -292,7 +293,7 @@ class TCPConnection(BMProto, TLSDispatcher):
             if host_is_global:
                 knownnodes.addKnownNode(
                     self.streams, self.destination, time.time())
-                state.Dandelion.maybeRemoveStem(self)
+                network.Dandelion.maybeRemoveStem(self)
         else:
             self.checkTimeOffsetNotification()
             if host_is_global:
