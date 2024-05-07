@@ -2,21 +2,17 @@
 Network subsystem package
 """
 
-try:
-    from .announcethread import AnnounceThread
-    from .connectionpool import BMConnectionPool
-except ImportError:
-    AnnounceThread = None
-    BMConnectionPool = None
 from .threads import StoppableThread
 
 
-__all__ = ["AnnounceThread", "BMConnectionPool", "StoppableThread"]
+__all__ = ["StoppableThread"]
 
 
 def start(config, state):
     """Start network threads"""
     import state
+    from .announcethread import AnnounceThread
+    from .connectionpool import BMConnectionPool
     from .addrthread import AddrThread
     from .dandelion import Dandelion
     from .downloadthread import DownloadThread

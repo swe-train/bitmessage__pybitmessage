@@ -19,7 +19,8 @@ import state
 import tr
 from bmconfigparser import config
 from debug import logger
-from network import BMConnectionPool, knownnodes, StoppableThread
+from network import knownnodes, StoppableThread
+from network.connectionpool import BMConnectionPool
 from network.node import Peer
 
 

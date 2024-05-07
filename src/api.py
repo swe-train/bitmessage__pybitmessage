@@ -96,7 +96,7 @@ from helper_sql import (
 from highlevelcrypto import calculateInventoryHash
 
 try:
-    from network import BMConnectionPool
+    from network.connectionpool import BMConnectionPool
 except ImportError:
     BMConnectionPool = None
 

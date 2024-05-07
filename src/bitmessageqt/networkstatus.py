@@ -10,7 +10,8 @@ import l10n
 import network.stats
 import state
 import widgets
-from network import BMConnectionPool, knownnodes
+from network import knownnodes
+from network.connectionpool import BMConnectionPool
 from retranslateui import RetranslateMixin
 from tr import _translate
 from uisignaler import UISignaler
